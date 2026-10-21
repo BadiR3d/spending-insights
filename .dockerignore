@@ -1,0 +1,14 @@
+node_modules
+dist
+coverage
+test-results
+playwright-report
+blob-report
+.git
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Dockerfile
+.dockerignore

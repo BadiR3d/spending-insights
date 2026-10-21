@@ -49,7 +49,7 @@ test('custom dates show empty states without changing overview and can reset', a
   await page.goto('/');
   await expect(page.getByTestId('total-spending')).toBeVisible();
   const total = await page.getByTestId('total-spending').textContent();
-  await page.getByText('Custom date range', { exact: true }).click();
+  await page.locator('summary', { hasText: 'Custom date range' }).click();
   await page.getByLabel('Start date').fill('2030-01-01');
   await page.getByLabel('End date').fill('2030-01-31');
   await page.getByRole('button', { name: 'Apply dates' }).click();

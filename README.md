@@ -1,6 +1,6 @@
 # Spending insights
 
-A responsive React assessment dashboard based on [`CustomerSpendingInsightsEndpoints.md`](../CustomerSpendingInsightsEndpoints.md). All seven endpoints are implemented with a deterministic mock API. The original job description and assessment documents are preserved in the parent folder.
+A responsive React assessment dashboard based on [`CustomerSpendingInsightsEndpoints.md`](docs/CustomerSpendingInsightsEndpoints.md). All seven endpoints are implemented with a deterministic mock API.
 
 ## Run locally
 
@@ -21,6 +21,21 @@ npm run lint
 npm run format:check
 npx playwright install chromium
 npm run test:e2e    # Desktop and mobile Chromium journeys
+```
+
+## Run with Docker
+
+```sh
+docker build -t spending-insights .
+docker run --rm -p 8080:80 spending-insights
+```
+
+Open http://localhost:8080. The image is a multi-stage build: Node 22 compiles the production bundle and nginx serves it with a single-page-app fallback. The mock service worker runs because localhost is a secure context. To target a real backend instead, bake the environment in at build time:
+
+```sh
+docker build -t spending-insights \
+  --build-arg VITE_ENABLE_MOCKS=false \
+  --build-arg VITE_API_BASE_URL=https://your-api.example .
 ```
 
 ## User journey
@@ -86,12 +101,12 @@ Unit tests cover malformed URLs, calendar boundaries and atomic filter transitio
 
 No persistence or write APIs are invented. Dark mode, exports and editing budgets are intentionally outside this assessment scope.
 
-## Verification status (20 October 2026)
+## Verification status (21 October 2026)
 
-- Production build and TypeScript checks: passed. Vite reports a non-blocking warning for the main JavaScript chunk exceeding 500 kB before gzip.
+- Fresh installation (`npm ci`), TypeScript checks and the production build: passed. Vite reports a non-blocking warning for the main JavaScript chunk exceeding 500 kB before gzip.
 - Unit, API and component tests: all 12 passed. The currency assertion compares exact text, preserving the formatter's non-breaking spaces.
 - ESLint and Prettier checks: passed.
-- The npm lockfile and generated MSW worker are present. `npm ci` is the recommended installation command; a fresh installation has not been independently verified here.
-- Browser tests and visual review: still outstanding. The Playwright run could not start its web server because the environment denied binding to `127.0.0.1:4173` (`EPERM`). This is an environment restriction, not a passing browser test. Install the matching Chromium browser and run `npm run test:e2e` outside the restricted environment before submitting.
+- Browser tests: all four Playwright journeys passed on desktop and mobile Chromium.
+- Docker: the build-stage steps (`npm ci` from package files only, then compiling the copied source) were verified outside Docker. Run the Docker commands above once on a machine with Docker before submitting.
 
-Installation automatically generates `public/mockServiceWorker.js` through the `postinstall` script. The original assessment specification is in the parent folder; include it alongside the application or adjust that documentation link if submitting this repository on its own.
+Installation automatically generates `public/mockServiceWorker.js` through the `postinstall` script. The assessment specification is included at [`docs/CustomerSpendingInsightsEndpoints.md`](docs/CustomerSpendingInsightsEndpoints.md).
